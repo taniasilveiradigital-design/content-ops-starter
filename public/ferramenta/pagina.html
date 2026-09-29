@@ -1,0 +1,614 @@
+<title>Quanto sobra da tua peça</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Raleway:wght@400;500;600;700&family=Dr+Sugiyama&display=swap">
+<style>
+/* Layout: ficha de custo à esquerda, etiqueta de preço fixa à direita; diagnóstico em coluna única por baixo. */
+:root {
+  --bg: #fcf9f6;
+  --surface: #ffffff;
+  --sunk: #f5ede6;
+  --line: #e7d9cd;
+  --ink: #3b2821;
+  --muted: #7b6356;
+  --brown: #5c3b2e;
+  --terra: #b26d47;
+  --terra-soft: #ba8166;
+  --beige: #bfa795;
+  --on-accent: #ffffff;
+  --good: #4a7a50;
+  --warn: #a87417;
+  --bad: #a3392b;
+  --f-display: "Cormorant Garamond", "Iowan Old Style", Georgia, serif;
+  --f-body: "Raleway", "Helvetica Neue", Arial, sans-serif;
+  --f-hand: "Dr Sugiyama", "Brush Script MT", cursive;
+  --r: 6px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #1b1310; --surface: #241915; --sunk: #2d2019; --line: #45332a; --ink: #f1e7df;
+    --muted: #bda99c; --brown: #e6cdbb; --terra: #d68e64; --terra-soft: #c99a80; --beige: #8d7868;
+    --on-accent: #1b1310; --good: #88bb8d; --warn: #e2b45c; --bad: #ec8573; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #1b1310; --surface: #241915; --sunk: #2d2019; --line: #45332a; --ink: #f1e7df;
+  --muted: #bda99c; --brown: #e6cdbb; --terra: #d68e64; --terra-soft: #c99a80; --beige: #8d7868;
+  --on-accent: #1b1310; --good: #88bb8d; --warn: #e2b45c; --bad: #ec8573; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body {
+  margin: 0; background: var(--bg); color: var(--ink);
+  font-family: var(--f-body); font-size: 16px; line-height: 1.55;
+  font-variant-numeric: lining-nums;
+}
+.wrap { max-width: 1120px; margin: 0 auto; padding: 0 20px; }
+h1, h2, h3 { font-family: var(--f-display); color: var(--brown); font-weight: 600; line-height: 1.1; text-wrap: balance; margin: 0; }
+a { color: var(--terra); }
+:focus-visible { outline: 2px solid var(--terra); outline-offset: 2px; }
+
+/* Cabeçalho com trama de tecido */
+.top {
+  border-bottom: 1px solid var(--line);
+  background:
+    repeating-linear-gradient(0deg, transparent 0 3px, color-mix(in srgb, var(--beige) 14%, transparent) 3px 4px),
+    repeating-linear-gradient(90deg, transparent 0 3px, color-mix(in srgb, var(--beige) 10%, transparent) 3px 4px),
+    var(--bg);
+}
+.top .wrap { padding-block: 28px 44px; display: grid; gap: 18px; }
+.brandline { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 14px; font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+.brandline strong { color: var(--brown); letter-spacing: .12em; }
+.top h1 { font-size: clamp(40px, 6.4vw, 72px); font-weight: 600; max-width: 14ch; }
+.top h1 em { font-style: italic; color: var(--terra); font-weight: 500; }
+.lede { max-width: 58ch; font-size: 17px; color: var(--ink); margin: 0; }
+.steps { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 6px; }
+.steps a {
+  display: inline-flex; align-items: center; gap: 10px; padding: 8px 14px 8px 8px;
+  border: 1px solid var(--line); border-radius: 999px; background: var(--surface);
+  color: var(--ink); text-decoration: none; font-weight: 600; font-size: 14px;
+}
+.steps a span { width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; background: var(--brown); color: var(--bg); font-size: 13px; }
+.steps a:hover { border-color: var(--terra); }
+
+section.part { padding-block: 56px 24px; }
+.part-head { display: grid; gap: 8px; margin-bottom: 28px; max-width: 64ch; }
+.eyebrow { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; font-weight: 700; color: var(--terra); }
+.part-head h2 { font-size: clamp(32px, 4.4vw, 46px); }
+.part-head p { margin: 0; color: var(--muted); }
+
+/* Calculadora */
+.calc { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 400px); gap: 32px; align-items: start; }
+.sheet { display: grid; gap: 22px; min-width: 0; }
+fieldset.group { margin: 0; border: 1px solid var(--line); border-radius: var(--r); background: var(--surface); padding: 18px 20px 20px; min-width: 0; }
+fieldset.group legend { font-family: var(--f-display); font-size: 22px; font-weight: 600; color: var(--brown); padding: 0 6px; margin-left: -6px; }
+.group .note { margin: 0 0 14px; font-size: 13px; color: var(--muted); }
+.fields { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 16px 18px; }
+.field { display: grid; gap: 5px; align-content: start; min-width: 0; }
+.field label { font-size: 13px; font-weight: 600; color: var(--ink); }
+.field small { font-size: 12px; color: var(--muted); line-height: 1.35; }
+.inp { display: flex; align-items: stretch; border: 1px solid var(--line); border-radius: var(--r); background: var(--bg); overflow: hidden; }
+.inp:focus-within { border-color: var(--terra); box-shadow: 0 0 0 3px color-mix(in srgb, var(--terra) 18%, transparent); }
+.inp input, .inp select {
+  flex: 1; min-width: 0; border: 0; background: transparent; color: var(--ink);
+  font: 600 16px/1 var(--f-body); font-variant-numeric: lining-nums tabular-nums; padding: 10px 10px;
+}
+.inp input:focus, .inp select:focus { outline: none; }
+.inp .u { display: grid; place-items: center; padding: 0 10px; font-size: 13px; color: var(--muted); background: var(--sunk); border-left: 1px solid var(--line); }
+.sample { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; font-size: 13px; color: var(--muted); }
+.sample b { color: var(--ink); }
+.btn-link { background: none; border: 0; padding: 0; font: inherit; color: var(--terra); text-decoration: underline; cursor: pointer; }
+
+/* Etiqueta */
+.tag-col { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 16px); min-width: 0; }
+.tag {
+  position: relative; background: var(--surface); border: 1px solid var(--line);
+  border-radius: 10px 10px 10px 10px; padding: 44px 24px 22px;
+  box-shadow: 0 1px 0 var(--line), 0 18px 40px -28px color-mix(in srgb, var(--brown) 55%, transparent);
+}
+.tag::before {
+  content: ""; position: absolute; top: 14px; left: 50%; width: 14px; height: 14px; margin-left: -7px;
+  border-radius: 50%; background: var(--bg); border: 1px solid var(--line);
+}
+.tag::after {
+  content: ""; position: absolute; top: -34px; left: 50%; width: 1px; height: 49px;
+  background: var(--terra-soft); transform: rotate(-8deg); transform-origin: bottom;
+}
+.tag-label { text-align: center; font-size: 11px; letter-spacing: .16em; text-transform: uppercase; color: var(--muted); font-weight: 700; }
+.big { text-align: center; margin: 4px 0 2px; font-family: var(--f-display); font-size: 76px; line-height: 1; font-weight: 600; color: var(--brown); font-variant-numeric: lining-nums tabular-nums; }
+.big-sub { text-align: center; font-size: 14px; color: var(--muted); margin-bottom: 12px; }
+.chip { display: inline-block; font-size: 12px; font-weight: 700; letter-spacing: .04em; padding: 3px 10px; border-radius: 999px; border: 1px solid currentColor; }
+.chip.good { color: var(--good); } .chip.warn { color: var(--warn); } .chip.bad { color: var(--bad); }
+.chip-row { text-align: center; margin-bottom: 18px; }
+.rows { display: grid; border-top: 1px dashed var(--line); }
+.row { display: flex; justify-content: space-between; gap: 12px; padding: 9px 0; border-bottom: 1px dashed var(--line); font-size: 14px; }
+.row span:first-child { color: var(--muted); min-width: 0; }
+.row b { font-variant-numeric: lining-nums tabular-nums; white-space: nowrap; }
+.row b.bad { color: var(--bad); } .row b.good { color: var(--good); }
+.progress { margin-top: 16px; display: grid; gap: 6px; font-size: 13px; }
+.progress .track { height: 8px; border-radius: 99px; background: var(--sunk); overflow: hidden; }
+.progress .fill { height: 100%; background: var(--terra); border-radius: 99px; transition: width .3s ease; }
+.alerts { list-style: none; margin: 18px 0 0; padding: 0; display: grid; gap: 10px; }
+.alerts li { font-size: 14px; line-height: 1.45; padding: 10px 12px; border-radius: var(--r); background: var(--sunk); border-left: 3px solid var(--terra); }
+.alerts li.bad { border-left-color: var(--bad); }
+.alerts li.good { border-left-color: var(--good); }
+.btn {
+  display: inline-flex; justify-content: center; align-items: center; gap: 8px; width: 100%;
+  margin-top: 18px; padding: 14px 18px; border: 0; border-radius: var(--r); cursor: pointer;
+  background: var(--brown); color: var(--bg); font: 700 15px/1 var(--f-body); letter-spacing: .02em; text-decoration: none;
+}
+.btn:hover { background: var(--terra); color: var(--on-accent); }
+.btn.ghost { background: transparent; color: var(--brown); border: 1px solid var(--line); }
+.btn.ghost:hover { border-color: var(--terra); color: var(--terra); background: transparent; }
+
+/* Diagnóstico */
+.diag { max-width: 760px; }
+.qcount { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 2; background: var(--bg); padding-block: 10px; margin-bottom: 8px; border-bottom: 1px solid var(--line); display: flex; align-items: center; gap: 14px; font-size: 13px; color: var(--muted); font-weight: 600; }
+.qcount .track { flex: 1; height: 4px; background: var(--sunk); border-radius: 99px; overflow: hidden; }
+.qcount .fill { height: 100%; width: 0; background: var(--terra); transition: width .25s ease; }
+.qs { display: grid; gap: 14px; }
+fieldset.q { margin: 0; border: 1px solid var(--line); border-radius: var(--r); padding: 16px 18px 18px; background: var(--surface); min-width: 0; }
+fieldset.q.missing { border-color: var(--terra); box-shadow: 0 0 0 2px color-mix(in srgb, var(--terra) 22%, transparent); }
+fieldset.q legend { float: left; width: 100%; padding: 0; margin-bottom: 12px; font-weight: 700; font-size: 16px; line-height: 1.35; color: var(--ink); }
+fieldset.q legend .n { color: var(--terra); font-variant-numeric: lining-nums tabular-nums; margin-right: 6px; }
+.opts { clear: both; display: grid; gap: 8px; }
+.opt { position: relative; }
+.opt input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; }
+.opt span { display: block; padding: 11px 14px; border: 1px solid var(--line); border-radius: var(--r); font-size: 15px; background: var(--bg); cursor: pointer; transition: border-color .15s, background .15s; }
+.opt input:hover + span { border-color: var(--terra-soft); }
+.opt input:checked + span { border-color: var(--terra); background: color-mix(in srgb, var(--terra) 12%, var(--surface)); font-weight: 600; }
+.opt input:focus-visible + span { outline: 2px solid var(--terra); outline-offset: 2px; }
+.calc-link { font-size: 14px; color: var(--muted); margin: 18px 0 0; padding: 12px 14px; border: 1px dashed var(--line); border-radius: var(--r); }
+
+.lead { margin-top: 26px; border: 1px solid var(--line); border-radius: var(--r); background: var(--surface); padding: 22px 20px; display: grid; gap: 16px; }
+.lead h3 { font-size: 28px; }
+.lead p { margin: 0; color: var(--muted); font-size: 14px; }
+.lead .fields { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
+.lead .inp input { font-weight: 500; }
+.consent { display: flex; gap: 10px; align-items: flex-start; font-size: 13px; color: var(--muted); }
+.consent input { margin-top: 3px; accent-color: var(--terra); width: 16px; height: 16px; flex: none; }
+.err { color: var(--bad); font-size: 14px; font-weight: 600; margin: 0; }
+
+.result { margin-top: 30px; display: grid; gap: 22px; }
+.res-head { display: grid; gap: 6px; }
+.res-head h3 { font-size: clamp(34px, 5vw, 50px); }
+.res-head h3 em { font-style: italic; color: var(--terra); }
+.bars { display: grid; gap: 12px; padding: 18px 20px; border: 1px solid var(--line); border-radius: var(--r); background: var(--surface); }
+.bar { display: grid; grid-template-columns: 130px minmax(0, 1fr) 70px; gap: 12px; align-items: center; font-size: 14px; }
+.bar .name { font-weight: 700; }
+.bar .track { height: 10px; background: var(--sunk); border-radius: 99px; overflow: hidden; }
+.bar .fill { height: 100%; border-radius: 99px; background: var(--beige); }
+.bar.top .fill { background: var(--terra); }
+.bar .lvl { font-size: 12px; font-weight: 700; text-align: right; }
+.lvl.good { color: var(--good); } .lvl.warn { color: var(--warn); } .lvl.bad { color: var(--bad); }
+.res-body p { margin: 0 0 12px; max-width: 62ch; font-size: 17px; }
+.first { margin: 0; padding: 0; list-style: none; counter-reset: s; display: grid; gap: 10px; }
+.first li { counter-increment: s; display: grid; grid-template-columns: 34px minmax(0, 1fr); gap: 10px; align-items: start; font-size: 15px; }
+.first li::before { content: counter(s); width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; border: 1px solid var(--terra); color: var(--terra); font-weight: 700; font-size: 13px; }
+.cta { background: var(--brown); color: var(--bg); border-radius: var(--r); padding: 24px 22px; display: grid; gap: 10px; }
+.cta h4 { margin: 0; font-family: var(--f-display); font-size: 28px; font-weight: 600; line-height: 1.15; color: var(--bg); }
+.cta p { margin: 0; opacity: .9; max-width: 56ch; }
+.cta .btn { background: var(--bg); color: var(--brown); width: auto; justify-self: start; }
+.cta .btn:hover { background: var(--terra); color: var(--on-accent); }
+.limit { font-size: 14px; color: var(--muted); max-width: 60ch; margin: 0; }
+
+footer { margin-top: 56px; border-top: 1px solid var(--line); }
+footer .wrap { padding-block: 26px 40px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px 20px; font-size: 13px; color: var(--muted); }
+.sig { font-family: var(--f-hand); font-size: 34px; color: var(--terra); line-height: 1; }
+
+@media (max-width: 880px) {
+  .calc { grid-template-columns: minmax(0, 1fr); }
+  .tag-col { position: static; margin-top: 30px; }
+}
+@media (max-width: 520px) {
+  .wrap { padding: 0 16px; }
+  .bar { grid-template-columns: 118px minmax(0, 1fr) 56px; gap: 8px; font-size: 13px; }
+  .big { font-size: 64px; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; scroll-behavior: auto !important; } }
+</style>
+
+<header class="top">
+  <div class="wrap">
+    <div class="brandline"><strong>Tânia Silveira</strong><span>Estrutura, margem e estratégia para marcas de moda</span></div>
+    <h1>Quanto sobra da tua <em>peça?</em></h1>
+    <p class="lede">Primeiro, as contas da peça como se fazem na produção: com perdas, amostras e defeitos. Depois, doze perguntas para saber onde está o que trava a tua marca.</p>
+    <nav class="steps" aria-label="Partes da ferramenta">
+      <a href="#numeros"><span>1</span>A peça em números</a>
+      <a href="#diagnostico"><span>2</span>O diagnóstico</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="part wrap" id="numeros" aria-labelledby="t-numeros">
+    <div class="part-head">
+      <span class="eyebrow">Parte 1 · Calculadora de margem</span>
+      <h2 id="t-numeros">A peça em números</h2>
+      <p>Preenche com os valores de uma peça tua. Os resultados mudam à medida que escreves.</p>
+      <div class="sample" id="sampleNote"><span><b>Exemplo carregado:</b> vestido de linho, produção de 60 peças.</span><button type="button" class="btn-link" id="clearBtn">Limpar e usar os meus números</button></div>
+    </div>
+
+    <div class="calc">
+      <form class="sheet" id="calcForm" autocomplete="off" onsubmit="return false">
+        <fieldset class="group">
+          <legend>Matéria-prima</legend>
+          <div class="fields">
+            <div class="field"><label for="tecido">Preço do tecido</label><div class="inp"><input id="tecido" type="number" inputmode="decimal" min="0" step="0.01" value="9"><span class="u">€/m</span></div></div>
+            <div class="field"><label for="consumo">Consumo por peça</label><div class="inp"><input id="consumo" type="number" inputmode="decimal" min="0" step="0.01" value="1.8"><span class="u">m</span></div><small>Metros de tecido que a peça gasta, pela ficha técnica.</small></div>
+            <div class="field"><label for="perda">Perda no corte</label><div class="inp"><input id="perda" type="number" inputmode="decimal" min="0" max="90" step="1" value="12"><span class="u">%</span></div><small>Tecido que fica no chão do corte. Entre 8% e 15% é normal.</small></div>
+          </div>
+        </fieldset>
+
+        <fieldset class="group">
+          <legend>Produção</legend>
+          <div class="fields">
+            <div class="field"><label for="confecao">Confeção</label><div class="inp"><input id="confecao" type="number" inputmode="decimal" min="0" step="0.01" value="14"><span class="u">€/peça</span></div></div>
+            <div class="field"><label for="aviamentos">Aviamentos e etiquetas</label><div class="inp"><input id="aviamentos" type="number" inputmode="decimal" min="0" step="0.01" value="3"><span class="u">€/peça</span></div><small>Botões, fechos, linhas, etiqueta de marca e de composição.</small></div>
+            <div class="field"><label for="embalagem">Embalagem</label><div class="inp"><input id="embalagem" type="number" inputmode="decimal" min="0" step="0.01" value="1.5"><span class="u">€/peça</span></div></div>
+            <div class="field"><label for="amostras">Amostras e protótipos</label><div class="inp"><input id="amostras" type="number" inputmode="decimal" min="0" step="1" value="240"><span class="u">€ total</span></div><small>Tudo o que pagaste até aprovar a peça.</small></div>
+            <div class="field"><label for="qtd">Quantidade produzida</label><div class="inp"><input id="qtd" type="number" inputmode="numeric" min="1" step="1" value="60"><span class="u">peças</span></div></div>
+            <div class="field"><label for="defeito">Peças com defeito</label><div class="inp"><input id="defeito" type="number" inputmode="decimal" min="0" max="90" step="1" value="3"><span class="u">%</span></div><small>Peças que chegam e não podes vender a preço inteiro.</small></div>
+          </div>
+        </fieldset>
+
+        <fieldset class="group">
+          <legend>Venda</legend>
+          <div class="fields">
+            <div class="field"><label for="pvp">Preço de venda (PVP)</label><div class="inp"><input id="pvp" type="number" inputmode="decimal" min="0" step="0.01" value="129"><span class="u">€ c/ IVA</span></div></div>
+            <div class="field"><label for="iva">IVA</label><div class="inp"><select id="iva"><option value="23" selected>23% · continente</option><option value="22">22% · Madeira</option><option value="16">16% · Açores</option><option value="0">Isenta (art. 53.º)</option></select></div></div>
+            <div class="field"><label for="comissao">Comissões</label><div class="inp"><input id="comissao" type="number" inputmode="decimal" min="0" max="90" step="0.1" value="3"><span class="u">%</span></div><small>Pagamentos, loja online, marketplace.</small></div>
+            <div class="field"><label for="portes">Portes que pagas tu</label><div class="inp"><input id="portes" type="number" inputmode="decimal" min="0" step="0.01" value="4"><span class="u">€/venda</span></div><small>Se ofereces envio, conta aqui.</small></div>
+            <div class="field"><label for="desconto">Desconto médio</label><div class="inp"><input id="desconto" type="number" inputmode="decimal" min="0" max="90" step="1" value="15"><span class="u">%</span></div><small>Somando saldos, códigos e promoções, quanto desconta em média cada venda.</small></div>
+          </div>
+        </fieldset>
+
+        <fieldset class="group">
+          <legend>Coleção e lojas</legend>
+          <div class="fields">
+            <div class="field"><label for="fixos">Outros custos da coleção</label><div class="inp"><input id="fixos" type="number" inputmode="decimal" min="0" step="1" value="1200"><span class="u">€ total</span></div><small>A parte desta peça na fotografia, lançamento e anúncios.</small></div>
+            <div class="field"><label for="alvo">Margem que queres ter</label><div class="inp"><input id="alvo" type="number" inputmode="decimal" min="1" max="90" step="1" value="55"><span class="u">%</span></div><small>Marca de autor trabalha entre 55% e 70%.</small></div>
+            <div class="field"><label for="loja">Multiplicador da loja</label><div class="inp"><input id="loja" type="number" inputmode="decimal" min="1" step="0.1" value="2.3"><span class="u">×</span></div><small>Quanto a loja multiplica o preço a que te compra. Normalmente entre 2,2 e 2,5.</small></div>
+          </div>
+        </fieldset>
+      </form>
+
+      <aside class="tag-col" aria-live="polite">
+        <div class="tag">
+          <div class="tag-label">Margem real por venda</div>
+          <div class="big" id="oMargem">—</div>
+          <div class="big-sub" id="oLucro">—</div>
+          <div class="chip-row"><span class="chip" id="oChip">—</span></div>
+          <div class="rows">
+            <div class="row"><span>Custo real da peça</span><b id="oCusto">—</b></div>
+            <div class="row"><span>Recebes por venda, sem IVA e com desconto</span><b id="oLiquido">—</b></div>
+            <div class="row"><span>Comissões e portes</span><b id="oTaxas">—</b></div>
+            <div class="row"><span>Multiplicador sobre o custo</span><b id="oMult">—</b></div>
+            <div class="row"><span>Desconto máximo antes do prejuízo</span><b id="oDmax">—</b></div>
+            <div class="row"><span>PVP mínimo, sem lucro</span><b id="oPmin">—</b></div>
+            <div class="row"><span id="oPalvoL">PVP para a margem que queres</span><b id="oPalvo">—</b></div>
+            <div class="row"><span>A vender a lojas, sobra por peça</span><b id="oLoja">—</b></div>
+          </div>
+          <div class="progress">
+            <div><span id="oBreakTxt">—</span></div>
+            <div class="track"><div class="fill" id="oBreakFill" style="width:0"></div></div>
+          </div>
+          <ul class="alerts" id="oAlerts"></ul>
+          <a class="btn" href="#diagnostico">Seguir para o diagnóstico</a>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <section class="part wrap" id="diagnostico" aria-labelledby="t-diag">
+    <div class="diag">
+      <div class="part-head">
+        <span class="eyebrow">Parte 2 · Diagnóstico</span>
+        <h2 id="t-diag">Onde está o gargalo da tua marca</h2>
+        <p>Responde pelo que acontece hoje, não pelo que gostavas que acontecesse. O resultado aponta uma de quatro áreas: produto, margem, posicionamento ou decisão.</p>
+      </div>
+
+      <div class="qcount" id="qcount"><span id="qTxt">0 de 13</span><div class="track"><div class="fill" id="qFill"></div></div></div>
+      <form id="diagForm" novalidate>
+        <div class="qs" id="qs"></div>
+        <p class="calc-link" id="calcLink"></p>
+
+        <div class="lead" id="leadBox">
+          <h3>Recebe o teu diagnóstico</h3>
+          <p>O resultado aparece aqui mesmo, e segue também para o teu email para o teres guardado.</p>
+          <div class="fields">
+            <div class="field"><label for="nome">Nome</label><div class="inp"><input id="nome" type="text" autocomplete="given-name" required></div></div>
+            <div class="field"><label for="email">Email</label><div class="inp"><input id="email" type="email" autocomplete="email" required></div></div>
+            <div class="field"><label for="marca">Nome da marca <span style="font-weight:400;color:var(--muted)">(opcional)</span></label><div class="inp"><input id="marca" type="text" autocomplete="organization"></div></div>
+          </div>
+          <label class="consent"><input id="consent" type="checkbox"> <span>Aceito receber o resultado e conteúdos da Tânia Silveira por email. Posso sair quando quiser.</span></label>
+          <p class="err" id="err" hidden></p>
+          <button class="btn" type="submit" style="margin-top:0">Ver o meu diagnóstico</button>
+        </div>
+      </form>
+
+      <div class="result" id="result" hidden tabindex="-1"></div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span class="sig">Tânia Silveira</span>
+    <span>Ferramenta de leitura. As decisões são tuas. · taniasilveira.pt</span>
+  </div>
+</footer>
+
+<script>
+/* ===== CONFIGURAÇÃO — mudar aqui quando estiver decidido ===== */
+var CONFIG = {
+  // Para onde vão os contactos (MailerLite, Brevo, Google Sheets, etc.). Vazio = não envia, só mostra o resultado.
+  endpoint: '',
+  // Links dos botões de marcação
+  urlDiagnostico: 'https://taniasilveira.pt',
+  urlTafeta: 'https://taniasilveira.pt'
+};
+
+(function () {
+  var eur = new Intl.NumberFormat('pt-PT', { style: 'currency', currency: 'EUR' });
+  var pct0 = function (x) { return Math.round(x * 100) + '%'; };
+  var $ = function (id) { return document.getElementById(id); };
+  var num = function (id) { var v = parseFloat($(id).value); return isFinite(v) ? v : 0; };
+  var ok = function (x) { return isFinite(x) && !isNaN(x); };
+  var money = function (x) { return ok(x) ? eur.format(x) : '—'; };
+  var lastCalc = null;
+  var touched = false;
+
+  function calc() {
+    var q = Math.max(0, Math.round(num('qtd')));
+    var perda = num('perda') / 100, def = Math.min(num('defeito') / 100, 0.9);
+    var iva = num('iva') / 100, com = num('comissao') / 100, disc = Math.min(num('desconto') / 100, 0.99);
+    var P = num('pvp'), portes = num('portes'), alvo = num('alvo') / 100, k = num('loja');
+
+    var tecido = num('tecido') * num('consumo') * (1 + perda);
+    var direto = tecido + num('confecao') + num('aviamentos') + num('embalagem');
+    var amostrasU = q > 0 ? num('amostras') / q : NaN;
+    var custo = direto / (1 - def) + amostrasU;
+
+    var pago = P * (1 - disc);
+    var liquido = pago / (1 + iva);
+    var taxas = pago * com + portes;
+    var lucro = liquido - taxas - custo;
+    var margem = liquido > 0 ? lucro / liquido : NaN;
+    var mult = custo > 0 ? (P / (1 + iva)) / custo : NaN;
+
+    var fator = 1 / (1 + iva) - com;
+    var dmax = P > 0 && fator > 0 ? 1 - (portes + custo) / (P * fator) : NaN;
+    var pmin = fator > 0 ? (portes + custo) / fator : NaN;
+    var den = 1 - (1 + iva) * com - alvo;
+    var palvo = den > 0 ? Math.ceil(((portes + custo) / den) * (1 + iva) / (1 - disc)) : NaN;
+
+    var grossista = k > 0 ? (P / (1 + iva)) / k : NaN;
+    var lucroLoja = grossista - custo;
+    var margemLoja = grossista > 0 ? lucroLoja / grossista : NaN;
+
+    var investido = q * direto + num('amostras') + num('fixos');
+    var contrib = liquido - taxas;
+    var boas = Math.floor(q * (1 - def));
+    var precisa = contrib > 0 ? Math.ceil(investido / contrib) : Infinity;
+    var sell = boas > 0 ? precisa / boas : Infinity;
+
+    return { custo: custo, liquido: liquido, taxas: taxas, lucro: lucro, margem: margem, mult: mult, dmax: dmax, disc: disc,
+      pmin: pmin, palvo: palvo, alvo: alvo, P: P, grossista: grossista, lucroLoja: lucroLoja, margemLoja: margemLoja,
+      precisa: precisa, boas: boas, sell: sell, investido: investido };
+  }
+
+  function render() {
+    var r = calc(); lastCalc = r;
+    $('oMargem').textContent = ok(r.margem) ? pct0(r.margem) : '—';
+    $('oLucro').textContent = ok(r.lucro) ? (r.lucro >= 0 ? 'Ficam ' + money(r.lucro) + ' por peça' : 'Perdes ' + money(-r.lucro) + ' por peça') : 'Faltam dados';
+    var chip = $('oChip');
+    var level = !ok(r.margem) ? '' : r.margem < 0.35 ? 'bad' : r.margem < r.alvo ? 'warn' : 'good';
+    chip.className = 'chip ' + level;
+    chip.textContent = level === 'bad' ? 'Margem crítica' : level === 'warn' ? 'Abaixo do teu alvo' : level === 'good' ? 'Margem saudável' : '—';
+
+    $('oCusto').textContent = money(r.custo);
+    $('oLiquido').textContent = money(r.liquido);
+    $('oTaxas').textContent = ok(r.taxas) ? '− ' + money(r.taxas) : '—';
+    $('oMult').textContent = ok(r.mult) ? r.mult.toFixed(1).replace('.', ',') + '×' : '—';
+    var dm = $('oDmax');
+    dm.textContent = ok(r.dmax) ? (r.dmax <= 0 ? 'nenhum' : pct0(r.dmax)) : '—';
+    dm.className = ok(r.dmax) && r.disc >= r.dmax ? 'bad' : '';
+    $('oPmin').textContent = money(r.pmin);
+    $('oPalvoL').textContent = 'PVP para ' + pct0(r.alvo) + ' de margem';
+    $('oPalvo').textContent = money(r.palvo);
+    var lj = $('oLoja');
+    lj.textContent = ok(r.lucroLoja) ? money(r.lucroLoja) + (ok(r.margemLoja) ? ' (' + pct0(r.margemLoja) + ')' : '') : '—';
+    lj.className = ok(r.lucroLoja) && r.lucroLoja <= 0 ? 'bad' : '';
+
+    var bt = $('oBreakTxt'), bf = $('oBreakFill');
+    if (isFinite(r.precisa) && r.boas > 0) {
+      bt.innerHTML = 'Para recuperar o que investiste: <b>' + r.precisa + ' de ' + r.boas + ' peças</b> (' + pct0(r.sell) + ')';
+      bf.style.width = Math.min(100, r.sell * 100) + '%';
+      bf.style.background = r.sell > 1 ? 'var(--bad)' : r.sell > 0.7 ? 'var(--warn)' : 'var(--terra)';
+    } else {
+      bt.textContent = 'Com estes números, nenhuma quantidade vendida recupera o investimento.';
+      bf.style.width = '100%'; bf.style.background = 'var(--bad)';
+    }
+
+    var a = [];
+    if (ok(r.lucro) && r.lucro < 0) a.push(['bad', 'Com o desconto médio que fazes, cada venda desta peça dá prejuízo.']);
+    else if (ok(r.dmax) && r.dmax > 0 && r.dmax - r.disc < 0.1) a.push(['bad', 'Estás a ' + Math.max(0, Math.round((r.dmax - r.disc) * 100)) + ' pontos do prejuízo. Mais uma campanha de saldos e esta peça deixa de pagar-se.']);
+    if (ok(r.lucroLoja) && r.lucroLoja <= 0) a.push(['bad', 'A vender a lojas, perdes ' + money(-r.lucroLoja) + ' em cada peça. Com este custo, a revenda não é opção.']);
+    else if (ok(r.margemLoja) && r.margemLoja < 0.3) a.push(['', 'A lojas, sobram-te ' + money(r.lucroLoja) + ' por peça. Não paga o trabalho de produzir e entregar.']);
+    if (ok(r.sell) && r.sell > 0.7 && r.sell <= 1) a.push(['', 'Tens de vender ' + pct0(r.sell) + ' da produção só para recuperar o que investiste. Cada peça parada já é prejuízo.']);
+    else if (r.sell > 1) a.push(['bad', 'Nem vendendo tudo recuperas o que investiste nesta produção.']);
+    if (ok(r.margem) && r.margem >= 0 && r.margem < r.alvo && ok(r.palvo)) a.push(['', 'Para chegares aos ' + pct0(r.alvo) + ', o PVP tinha de ser ' + money(r.palvo) + '. Ou baixas o custo, ou revês o preço e o desconto.']);
+    if (ok(r.mult) && r.mult < 2.5 && a.length < 4) a.push(['', 'Multiplicador de ' + r.mult.toFixed(1).replace('.', ',') + '×. Em marca própria, abaixo de 2,5× raramente chega para pagar a estrutura.']);
+    if (!a.length && ok(r.margem)) a.push(['good', 'Os números desta peça aguentam-se. Agora confirma que o resto da coleção segue a mesma conta.']);
+    $('oAlerts').innerHTML = a.slice(0, 4).map(function (x) { return '<li class="' + x[0] + '">' + x[1] + '</li>'; }).join('');
+
+    updateCalcLink();
+  }
+
+  $('calcForm').addEventListener('input', function () {
+    if (!touched) { touched = true; $('sampleNote').innerHTML = '<span><b>Os teus números.</b> Nada fica guardado nesta página.</span>'; }
+    render();
+  });
+  $('clearBtn').addEventListener('click', function () {
+    ['tecido', 'consumo', 'confecao', 'aviamentos', 'embalagem', 'amostras', 'pvp', 'portes', 'fixos'].forEach(function (id) { $(id).value = ''; });
+    touched = true;
+    $('sampleNote').innerHTML = '<span><b>Os teus números.</b> Nada fica guardado nesta página.</span>';
+    render(); $('tecido').focus();
+  });
+
+  /* ===== Diagnóstico ===== */
+  var AREAS = {
+    produto: 'Produto', margem: 'Margem', posicionamento: 'Posicionamento', decisao: 'Decisão'
+  };
+  var QS = [
+    { id: 'fase', area: null, t: 'Em que ponto está a tua marca?', o: ['Ainda não vendo, ou vendo muito pouco', 'Já vendo, mas trabalho muito e sobra pouco', 'Vendo bem, mas a marca depende de mim para tudo'] },
+    { id: 'p1', area: 'produto', t: 'Sabes quais são as três peças que mais vendes, e porquê?', o: ['Sim, com números', 'Tenho uma ideia', 'Não sei'] },
+    { id: 'm1', area: 'margem', t: 'Como defines o preço de uma peça?', o: ['Custo real, margem que quero e mercado', 'Multiplico o custo por um número que ouvi', 'Pelo que a concorrência cobra'] },
+    { id: 's1', area: 'posicionamento', t: 'Consegues dizer numa frase para quem é a tua marca?', o: ['Sim, e a cliente reconhece-se nela', 'Mais ou menos', 'É para todas as mulheres'] },
+    { id: 'd1', area: 'decisao', t: 'Quando tens uma decisão grande para tomar, como decides?', o: ['Com critério e números', 'Peço opinião a muita gente', 'Por impulso, ou vou adiando'] },
+    { id: 'p2', area: 'produto', t: 'Como nasce uma coleção nova?', o: ['Do que vendeu e do que falta na gama', 'Metade dados, metade inspiração', 'Do que me apetece criar'] },
+    { id: 'm2', area: 'margem', t: 'Com que frequência fazes descontos?', o: ['Só em momentos planeados', 'Sempre que as vendas abrandam', 'Há quase sempre alguma promoção'] },
+    { id: 's2', area: 'posicionamento', t: 'Porque é que uma cliente te escolhe a ti e não à concorrente?', o: ['Sei, e comunico isso', 'Acho que sei, mas não passa', 'Pelo preço, ou não sei'] },
+    { id: 'd2', area: 'decisao', t: 'Quem decide o que acontece na marca?', o: ['Há processos e pessoas com responsabilidade', 'Eu, mas já delego algumas coisas', 'Eu. Tudo. Sempre.'] },
+    { id: 'p3', area: 'produto', t: 'Quanto ficou em stock da última coleção?', o: ['Menos de 20%', 'Entre 20% e 40%', 'Mais de 40%, ou não sei'] },
+    { id: 'm3', area: 'margem', t: 'Sabes quanto a marca ganhou no mês passado, depois de pagar tudo?', o: ['Sei ao euro', 'Faço uma ideia', 'Não sei'] },
+    { id: 's3', area: 'posicionamento', t: 'Quem vê o teu Instagram pela primeira vez…', o: ['Percebe logo o que vendes e para quem', 'Percebe o produto, mas não a marca', 'Podia estar a ver outra marca qualquer'] },
+    { id: 'd3', area: 'decisao', t: 'Tens um plano para os próximos seis meses?', o: ['Escrito, com números', 'Na cabeça', 'Vou vendo'] }
+  ];
+
+  var RES = {
+    margem: {
+      txt: ['Vendes, mas não sabes quanto fica. O preço foi definido a olho ou por comparação, e o desconto está a comer o que sobra.', 'Enquanto a margem não estiver certa, vender mais só te dá mais trabalho.'],
+      passos: ['Faz a conta ao custo real de cada peça, com perdas, amostras e defeitos. A calculadora acima serve para isso.', 'Define um desconto máximo por peça e não passes dele, nem nos saldos.', 'Separa o dinheiro da marca do teu e fecha as contas todos os meses.']
+    },
+    produto: {
+      txt: ['A coleção nasce da vontade e não da análise. O resultado é stock parado e peças que não se vendem sozinhas.', 'Produto antes da comunicação: nenhum post resolve uma peça errada.'],
+      passos: ['Lista as peças que mais venderam nas duas últimas coleções e escreve porquê.', 'Corta o que não vendeu, em vez de o repetir noutra cor.', 'Constrói a próxima coleção a partir de uma gama base, e só depois acrescenta novidade.']
+    },
+    posicionamento: {
+      txt: ['A tua cliente não percebe porque te deve escolher a ti. Quando não há diferença clara, a decisão vai para o preço.', 'E a competir por preço, uma marca pequena perde sempre.'],
+      passos: ['Escreve numa frase para quem é a marca e o que resolve a essa pessoa.', 'Revê o feed e tira tudo o que não reforça essa frase.', 'Deixa de te comparar com quem vende mais barato. Não é essa a tua cliente.']
+    },
+    decisao: {
+      txt: ['A marca anda ao ritmo do impulso. Decides tarde, decides sozinha, ou não decides.', 'Sem critério, cada escolha é uma aposta, e tu és o gargalo do teu próprio negócio.'],
+      passos: ['Escolhe três números para olhar todas as semanas: vendas, margem e stock.', 'Escreve o plano dos próximos seis meses, mesmo que caiba numa página.', 'Decide o que deixa de passar por ti, e a quem o entregas.']
+    }
+  };
+
+  var qsEl = $('qs');
+  qsEl.innerHTML = QS.map(function (q, i) {
+    return '<fieldset class="q" id="q-' + q.id + '"><legend><span class="n">' + (i + 1) + '.</span>' + q.t + '</legend><div class="opts">' +
+      q.o.map(function (o, j) {
+        return '<label class="opt"><input type="radio" name="' + q.id + '" id="' + q.id + '-' + j + '" value="' + j + '"><span>' + o + '</span></label>';
+      }).join('') + '</div></fieldset>';
+  }).join('');
+
+  function answers() {
+    var a = {};
+    QS.forEach(function (q) { var c = document.querySelector('input[name="' + q.id + '"]:checked'); if (c) a[q.id] = +c.value; });
+    return a;
+  }
+  function updateCount() {
+    var n = Object.keys(answers()).length;
+    $('qTxt').textContent = n + ' de ' + QS.length;
+    $('qFill').style.width = (n / QS.length * 100) + '%';
+  }
+  qsEl.addEventListener('change', function (e) {
+    var fs = e.target.closest('fieldset.q'); if (fs) fs.classList.remove('missing');
+    updateCount();
+  });
+
+  function calcBonus() {
+    if (!lastCalc || !ok(lastCalc.margem)) return 0;
+    return lastCalc.margem < 0.4 ? 2 : lastCalc.margem < 0.55 ? 1 : 0;
+  }
+  function updateCalcLink() {
+    var el = $('calcLink'); if (!el) return;
+    if (lastCalc && ok(lastCalc.margem)) {
+      el.textContent = 'A margem real da calculadora (' + pct0(lastCalc.margem) + ') também entra na área da margem.';
+    } else {
+      el.textContent = 'Se preencheres a calculadora, a margem real da tua peça também entra no resultado.';
+    }
+  }
+
+  $('diagForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var a = answers(), err = $('err');
+    var missing = QS.filter(function (q) { return !(q.id in a); });
+    document.querySelectorAll('fieldset.q').forEach(function (f) { f.classList.remove('missing'); });
+    if (missing.length) {
+      missing.forEach(function (q) { $('q-' + q.id).classList.add('missing'); });
+      err.textContent = missing.length === 1 ? 'Falta uma pergunta. Está marcada a terracota.' : 'Faltam ' + missing.length + ' perguntas. Estão marcadas a terracota.';
+      err.hidden = false; $('q-' + missing[0].id).scrollIntoView({ behavior: 'smooth', block: 'center' }); return;
+    }
+    var nome = $('nome').value.trim(), email = $('email').value.trim();
+    if (!nome) { err.textContent = 'Escreve o teu nome.'; err.hidden = false; $('nome').focus(); return; }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { err.textContent = 'O email não parece certo. Confirma se tem @ e domínio.'; err.hidden = false; $('email').focus(); return; }
+    if (!$('consent').checked) { err.textContent = 'Para receberes o resultado por email, marca a autorização.'; err.hidden = false; return; }
+    err.hidden = true;
+
+    var score = { produto: 0, margem: 0, posicionamento: 0, decisao: 0 };
+    var max = { produto: 6, margem: 8, posicionamento: 6, decisao: 6 };
+    QS.forEach(function (q) { if (q.area) score[q.area] += a[q.id]; });
+    var bonus = calcBonus(); score.margem += bonus;
+    if (!(lastCalc && ok(lastCalc.margem))) max.margem = 6;
+    var order = ['margem', 'produto', 'decisao', 'posicionamento'];
+    var pctOf = function (k) { return score[k] / max[k]; };
+    var top = order.slice().sort(function (x, y) { return pctOf(y) - pctOf(x) || order.indexOf(x) - order.indexOf(y); })[0];
+    var fase = a.fase;
+
+    showResult(nome, top, score, max, pctOf, fase);
+
+    var payload = { nome: nome, email: email, marca: $('marca').value.trim(), fase: ['inicio', 'operacional', 'escala'][fase],
+      gargalo: top, pontuacao: score, margemCalculadora: lastCalc && ok(lastCalc.margem) ? Math.round(lastCalc.margem * 100) : null,
+      respostas: a, data: new Date().toISOString() };
+    if (CONFIG.endpoint) {
+      try { fetch(CONFIG.endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) }).catch(function () {}); } catch (x) {}
+    }
+  });
+
+  function lvl(p) { return p < 0.34 ? ['good', 'Sólido'] : p < 0.67 ? ['warn', 'Atenção'] : ['bad', 'Crítico']; }
+  function esc(s) { return s.replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+
+  function showResult(nome, top, score, max, pctOf, fase) {
+    var r = RES[top];
+    var allGood = pctOf(top) < 0.34;
+    var bars = ['produto', 'margem', 'posicionamento', 'decisao'].map(function (k) {
+      var p = pctOf(k), l = lvl(p);
+      return '<div class="bar' + (k === top ? ' top' : '') + '"><span class="name">' + AREAS[k] + '</span><div class="track"><div class="fill" style="width:' + Math.max(4, p * 100) + '%"></div></div><span class="lvl ' + l[0] + '">' + l[1] + '</span></div>';
+    }).join('');
+    var cta = fase === 2
+      ? { h: 'Tafetá 360', p: 'Para quem já tem uma marca a funcionar e quer saber exatamente onde afinar para crescer com mais precisão. Duas horas de diagnóstico e uma hora de seguimento ao fim de um mês.', b: 'Quero a Tafetá 360', u: CONFIG.urlTafeta }
+      : { h: 'Diagnóstico Estratégico', p: 'Antes de mudar tudo, percebe o que está errado. O Diagnóstico identifica onde está o problema real e o que tens de fazer primeiro.', b: 'Quero o Diagnóstico Estratégico', u: CONFIG.urlDiagnostico };
+    var head = allGood
+      ? '<h3>' + esc(nome) + ', a tua marca tem <em>base</em>.</h3>'
+      : '<h3>' + esc(nome) + ', o teu gargalo é <em>' + AREAS[top].toLowerCase() + '</em>.</h3>';
+    var intro = allGood
+      ? '<p>Nenhuma área está em estado crítico. A que pede mais atenção é ' + AREAS[top].toLowerCase() + '. É daqui que vem o próximo salto.</p>'
+      : r.txt.map(function (t) { return '<p>' + t + '</p>'; }).join('');
+
+    var el = $('result');
+    el.innerHTML =
+      '<div class="res-head"><span class="eyebrow">O teu resultado</span>' + head + '</div>' +
+      '<div class="bars" aria-label="Pontuação por área">' + bars + '</div>' +
+      '<div class="res-body">' + intro + '</div>' +
+      '<div><h3 style="font-size:26px;margin-bottom:12px">O que fazer primeiro</h3><ol class="first">' + r.passos.map(function (p) { return '<li><span>' + p + '</span></li>'; }).join('') + '</ol></div>' +
+      '<div class="cta"><span class="eyebrow" style="color:var(--beige)">Próximo passo</span><h4>' + cta.h + '</h4><p>' + cta.p + '</p><a class="btn" href="' + cta.u + '" target="_blank" rel="noopener">' + cta.b + '</a></div>' +
+      '<p class="limit">Esta ferramenta dá-te uma leitura. Não decide por ti. Quem decide é quem conhece o negócio, e o critério vem de olhar para os números certos.</p>' +
+      '<button type="button" class="btn ghost" id="redo" style="width:auto;justify-self:start">Refazer o diagnóstico</button>';
+    el.hidden = false;
+    $('leadBox').hidden = true; $('qcount').hidden = true;
+    el.focus({ preventScroll: true });
+    el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    $('redo').addEventListener('click', function () {
+      el.hidden = true; $('leadBox').hidden = false; $('qcount').hidden = false;
+      document.querySelectorAll('#qs input').forEach(function (i) { i.checked = false; });
+      updateCount(); $('q-fase').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+  }
+
+  render();
+  updateCount();
+})();
+</script>
