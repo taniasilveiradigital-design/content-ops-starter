@@ -1,0 +1,135 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    html {
+        scroll-behavior: smooth;
+        -webkit-text-size-adjust: 100%;
+    }
+    body {
+        @apply bg-white font-sans text-tinta antialiased;
+        font-size: 1.0625rem;
+        line-height: 1.7;
+    }
+    h1,
+    h2,
+    h3,
+    h4 {
+        @apply font-serif text-cafe;
+        line-height: 1.1;
+        letter-spacing: -0.01em;
+    }
+    h1 {
+        @apply text-4xl font-semibold sm:text-5xl lg:text-6xl;
+    }
+    h2 {
+        @apply text-3xl font-semibold sm:text-4xl lg:text-5xl;
+    }
+    h3 {
+        @apply text-2xl font-semibold;
+    }
+    ::selection {
+        @apply bg-barro text-white;
+    }
+    :focus-visible {
+        outline: 2px solid #b26d47;
+        outline-offset: 3px;
+    }
+}
+
+@layer components {
+    .container-site {
+        @apply mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8;
+    }
+    .eyebrow {
+        @apply text-xs font-semibold uppercase tracking-[0.2em] text-terracota;
+    }
+    .btn {
+        @apply inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold tracking-wide transition duration-200;
+    }
+    .btn-primary {
+        @apply btn bg-cafe text-white hover:bg-tinta;
+    }
+    .btn-secondary {
+        @apply btn border border-cafe text-cafe hover:bg-cafe hover:text-white;
+    }
+    .btn-light {
+        @apply btn bg-white text-cafe hover:bg-linho;
+    }
+    .card {
+        @apply rounded-2xl border border-cru bg-white p-6 sm:p-8;
+    }
+    .field {
+        @apply w-full rounded-xl border border-bege bg-white px-4 py-3 text-base text-tinta placeholder:text-bege focus:border-terracota focus:outline-none focus:ring-2 focus:ring-terracota/30;
+    }
+    .label {
+        @apply mb-1.5 block text-sm font-semibold text-cafe;
+    }
+    /* Trama de tecido: textura subtil para fundos */
+    .weave {
+        background-color: #f6f1ec;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12'%3E%3Cpath d='M0 3h12M0 9h12' stroke='%23bfa795' stroke-opacity='.18' stroke-width='1'/%3E%3Cpath d='M3 0v12M9 0v12' stroke='%235c3b2e' stroke-opacity='.06' stroke-width='1'/%3E%3C/svg%3E");
+    }
+    .stitch {
+        background-image: linear-gradient(to right, #b26d47 60%, transparent 0);
+        background-size: 14px 2px;
+        background-repeat: repeat-x;
+        height: 2px;
+    }
+    .prose-site p {
+        @apply mb-5;
+    }
+    .prose-site h2 {
+        @apply mb-4 mt-12 text-3xl;
+    }
+    .prose-site h3 {
+        @apply mb-3 mt-8;
+    }
+    .prose-site ul {
+        @apply mb-5 list-disc space-y-2 pl-5 marker:text-terracota;
+    }
+    .prose-site a {
+        @apply text-cafe underline decoration-terracota underline-offset-4;
+    }
+}
+
+/* Revelar ao fazer scroll — só quando há JavaScript, para o conteúdo nunca ficar escondido */
+.js .reveal {
+    opacity: 0;
+    transform: translateY(16px);
+    transition:
+        opacity 0.7s ease,
+        transform 0.7s ease;
+}
+.js .reveal.is-visible {
+    opacity: 1;
+    transform: none;
+}
+
+/* Linha que se desenha no hero */
+.thread-draw path {
+    stroke-dasharray: 1400;
+    stroke-dashoffset: 1400;
+    animation: draw 2.6s ease-out 0.3s forwards;
+}
+@keyframes draw {
+    to {
+        stroke-dashoffset: 0;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
+    .js .reveal {
+        opacity: 1;
+        transform: none;
+        transition: none;
+    }
+    .thread-draw path {
+        animation: none;
+        stroke-dashoffset: 0;
+    }
+}

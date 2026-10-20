@@ -1,3 +1,46 @@
 [build]
   command = "npm run build"
-  publish = ".next"
+  publish = "out"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+# Endereços do template antigo
+[[redirects]]
+  from = "/pricing/*"
+  to = "/"
+  status = 301
+[[redirects]]
+  from = "/careers/*"
+  to = "/"
+  status = 301
+[[redirects]]
+  from = "/blog/*"
+  to = "/"
+  status = 301
+
+# Versão www apontam para o domínio principal
+[[redirects]]
+  from = "https://www.taniasilveira.pt/*"
+  to = "https://taniasilveira.pt/:splat"
+  status = 301
+  force = true
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "SAMEORIGIN"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=()"
+    Strict-Transport-Security = "max-age=31536000; includeSubDomains"
+
+[[headers]]
+  for = "/_next/static/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/__forms.html"
+  [headers.values]
+    X-Robots-Tag = "noindex"

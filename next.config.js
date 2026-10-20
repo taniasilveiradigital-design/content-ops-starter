@@ -2,14 +2,11 @@
  * @type {import('next').NextConfig}
  */
 const nextConfig = {
-    env: {
-        stackbitPreview: process.env.STACKBIT_PREVIEW
-    },
+    output: 'export',
     trailingSlash: true,
     reactStrictMode: true,
-    allowedDevOrigins: [
-        '192.168.1.84'
-    ]
+    images: { unoptimized: true },
+    poweredByHeader: false
 };
 
 module.exports = nextConfig;
