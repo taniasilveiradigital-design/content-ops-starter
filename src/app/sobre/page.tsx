@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Image from 'next/image';
 import Link from 'next/link';
 import JsonLd from '@/components/JsonLd';
 import { CtaBand, PageHero } from '@/components/ui';
@@ -31,6 +32,9 @@ export default function SobrePage() {
                 <div className="reveal">
                     <p className="eyebrow">De onde venho</p>
                     <h2 className="mt-4">Transmontana de raiz.</h2>
+                    <div className="relative mt-8 aspect-[4/5] overflow-hidden rounded-[1.5rem]">
+                        <Image src="/fotos/tania-raizes.webp" alt="Tânia Silveira nas serras transmontanas ao pôr do sol" fill sizes="(min-width: 1024px) 35vw, 90vw" className="photo-grade object-cover" />
+                    </div>
                 </div>
                 <div className="prose-site reveal text-lg text-tinta/85">
                     <p>
@@ -49,11 +53,14 @@ export default function SobrePage() {
                     <div className="reveal">
                         <p className="eyebrow">O que faço</p>
                         <h2 className="mt-4">Trago critério onde existe improviso.</h2>
+                        <div className="relative mt-8 aspect-[4/5] overflow-hidden rounded-[1.5rem]">
+                            <Image src="/fotos/tania-camisa.webp" alt="Tânia Silveira, retrato de camisa branca" fill sizes="(min-width: 1024px) 35vw, 90vw" className="photo-grade object-cover" />
+                        </div>
                     </div>
                     <div className="prose-site reveal text-lg text-tinta/85">
                         <p>
                             Transformo marcas de moda confusas em negócios com direção, margem e estrutura. Olho para a coleção, para o preço e para as
-                            decisões com os olhos de quem já esteve do lado da produção.
+                            decisões com os olhos de quem já esteve do lado da produção. E uso inteligência artificial para chegar mais depressa ao que interessa.
                         </p>
                         <p>Sei onde a margem se perde antes de a peça chegar à cliente. Sei porque é que uma coleção bonita pode não pagar as contas.</p>
                         <p>

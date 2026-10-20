@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next';
-import { Cormorant_Garamond, Dr_Sugiyama, Raleway } from 'next/font/google';
+import { Bodoni_Moda, Dr_Sugiyama, Raleway } from 'next/font/google';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import JsonLd from '@/components/JsonLd';
@@ -8,7 +8,7 @@ import { site } from '@/lib/site';
 import { baseGraph } from '@/lib/schema';
 import './globals.css';
 
-const serif = Cormorant_Garamond({ subsets: ['latin'], weight: ['500', '600', '700'], variable: '--font-serif', display: 'swap' });
+const serif = Bodoni_Moda({ subsets: ['latin'], axes: ['opsz'], variable: '--font-serif', display: 'swap' });
 const sans = Raleway({ subsets: ['latin'], weight: ['400', '500', '600', '700'], variable: '--font-sans', display: 'swap' });
 const script = Dr_Sugiyama({ subsets: ['latin'], weight: '400', variable: '--font-script', display: 'swap' });
 

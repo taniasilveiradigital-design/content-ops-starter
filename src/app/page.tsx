@@ -1,6 +1,9 @@
 import type { Metadata } from 'next';
+import Image from 'next/image';
 import Link from 'next/link';
 import CaseSelector from '@/components/CaseSelector';
+import HeroAI from '@/components/HeroAI';
+import Marquee from '@/components/Marquee';
 import JsonLd from '@/components/JsonLd';
 import { Check, CtaBand, Faq } from '@/components/ui';
 import { homeFaq } from '@/lib/faq';
@@ -30,51 +33,22 @@ const stages = [
     }
 ];
 
-const pillars = ['Estrutura antes do crescimento', 'Produto antes da comunicação', 'Clareza antes da execução', 'Decisão antes da ação'];
+const aiCards = [
+    { tag: '01 · dados', title: 'Coleção e vendas lidas a sério', text: 'Cruzo vendas, stock e margem por referência. Fica claro o que paga a coleção e o que só ocupa espaço.' },
+    { tag: '02 · cenários', title: 'Custo e preço testados antes', text: 'Simulo preços, quantidades e descontos antes de decidires. Vês o impacto na margem antes de produzir.' },
+    { tag: '03 · mercado', title: 'Mercado têxtil com filtro', text: 'Leio tendências, concorrência e sinais do mercado depressa. E separo o que serve a tua marca do ruído.' },
+    { tag: '04 · processos', title: 'Operação que não depende de ti', text: 'Monto rotinas e ferramentas com IA para a marca deixar de girar à tua volta.' }
+];
+
+const pillars =['Estrutura antes do crescimento', 'Produto antes da comunicação', 'Clareza antes da execução', 'Decisão antes da ação'];
 
 export default function HomePage() {
     return (
         <>
             <JsonLd data={faqSchema(homeFaq)} />
 
-            {/* HERO */}
-            <section className="weave relative overflow-hidden border-b border-cru">
-                <svg
-                    className="thread-draw pointer-events-none absolute -right-24 top-6 hidden h-[560px] w-[620px] text-terracota/50 md:block"
-                    viewBox="0 0 620 560"
-                    fill="none"
-                    aria-hidden="true"
-                >
-                    <path
-                        d="M610 20C470 40 420 140 470 210s170 60 120 160-260 40-300 120S330 600 120 520 -20 380 60 300"
-                        stroke="currentColor"
-                        strokeWidth="1.6"
-                        strokeLinecap="round"
-                        strokeDasharray="1400"
-                    />
-                </svg>
-                <div className="container-site relative py-20 sm:py-28 lg:py-32">
-                    <p className="eyebrow">Estratégia de produto e estrutura para marcas de moda</p>
-                    <h1 className="mt-5 max-w-4xl">
-                        A tua marca de moda não precisa de mais conteúdo. <span className="text-terracota">Precisa de estrutura.</span>
-                    </h1>
-                    <p className="mt-7 max-w-2xl text-lg text-tinta/85 sm:text-xl">
-                        Sou a Tânia Silveira. Estrategista de produto e negócio, com percurso feito no chão de fábrica. Ajudo marcas de moda a ter direção,
-                        margem e decisões com critério.
-                    </p>
-                    <div className="mt-9 flex flex-col gap-3 sm:flex-row">
-                        <Link href="/diagnostico/" className="btn-primary">
-                            Fazer o diagnóstico gratuito
-                        </Link>
-                        <Link href="/metodo-fibra/" className="btn-secondary">
-                            Conhecer o Método FIBRA
-                        </Link>
-                    </div>
-                    <p className="mt-10 font-script text-4xl text-terracota" aria-hidden="true">
-                        Tânia Silveira
-                    </p>
-                </div>
-            </section>
+            <HeroAI />
+            <Marquee />
 
             {/* FASES */}
             <section className="container-site py-20 sm:py-28">
@@ -91,6 +65,44 @@ export default function HomePage() {
                             <p className="mt-3 text-tinta/80">{s.text}</p>
                         </article>
                     ))}
+                </div>
+            </section>
+
+            {/* IA */}
+            <section id="ia" className="scroll-mt-20 bg-cafe text-linho">
+                <div className="container-site grid gap-12 py-20 sm:py-28 lg:grid-cols-[1fr_1.25fr] lg:items-center">
+                    <div className="reveal relative">
+                        <div className="relative aspect-[4/5] overflow-hidden rounded-[2rem] ring-1 ring-white/10">
+                            <Image
+                                src="/fotos/tania-estudio.webp"
+                                alt="Tânia Silveira no escritório, com o ecrã de trabalho atrás"
+                                fill
+                                sizes="(min-width: 1024px) 40vw, 90vw"
+                                className="photo-grade object-cover"
+                            />
+                        </div>
+                        <p className="absolute -bottom-5 left-6 rounded-full bg-terracota px-5 py-2 text-sm font-semibold text-white shadow-lg">
+                            Chão de fábrica + IA
+                        </p>
+                    </div>
+                    <div className="reveal">
+                        <p className="eyebrow !text-barro">IA com chão de fábrica</p>
+                        <h2 className="mt-4 !text-white">A IA acelera. O critério vem da fábrica.</h2>
+                        <p className="mt-5 text-lg text-linho/85">
+                            Uso inteligência artificial para fazer em horas o que antes levava semanas: ler dados, cruzar custos, testar cenários. Mas nenhuma
+                            ferramenta sabe porque é que um fornecedor atrasa ou onde a margem se perde numa peça. Isso sei eu.
+                        </p>
+                        <div className="mt-10 grid gap-4 sm:grid-cols-2">
+                            {aiCards.map((c) => (
+                                <article key={c.title} className="rounded-2xl border border-white/15 bg-white/5 p-5 transition hover:border-barro hover:bg-white/10">
+                                    <p className="font-mono text-xs text-barro">{c.tag}</p>
+                                    <h3 className="mt-2 !text-xl !text-white">{c.title}</h3>
+                                    <p className="mt-2 text-sm text-linho/80">{c.text}</p>
+                                </article>
+                            ))}
+                        </div>
+                        <p className="mt-8 font-serif text-2xl font-semibold text-white">Não vendo IA. Resolvo problemas. A IA é uma das ferramentas.</p>
+                    </div>
                 </div>
             </section>
 
@@ -194,12 +206,23 @@ export default function HomePage() {
             </section>
 
             {/* SOBRE */}
-            <section className="container-site grid gap-12 py-20 sm:py-28 lg:grid-cols-[1fr_1.2fr] lg:items-center">
-                <div className="reveal">
-                    <p className="eyebrow">Quem está do outro lado</p>
-                    <h2 className="mt-4">Não venho da teoria. Venho da fábrica.</h2>
+            <section className="container-site grid gap-12 py-20 sm:py-28 lg:grid-cols-[1.1fr_1fr] lg:items-center">
+                <div className="reveal grid grid-cols-2 gap-4">
+                    <figure className="relative row-span-2 min-h-[320px] overflow-hidden rounded-[1.5rem]">
+                        <Image src="/fotos/tania-porto.webp" alt="Tânia Silveira de fato branco, com o Porto ao fundo" fill sizes="(min-width: 1024px) 25vw, 45vw" className="photo-grade object-cover" />
+                    </figure>
+                    <figure className="relative aspect-square overflow-hidden rounded-[1.5rem]">
+                        <Image src="/fotos/tania-raizes.webp" alt="Tânia Silveira ao pôr do sol, nas serras transmontanas" fill sizes="(min-width: 1024px) 20vw, 45vw" className="photo-grade object-cover" />
+                        <figcaption className="absolute bottom-3 left-3 rounded-full bg-tinta/70 px-3 py-1 text-xs font-semibold text-white">Raiz transmontana</figcaption>
+                    </figure>
+                    <figure className="relative aspect-square overflow-hidden rounded-[1.5rem]">
+                        <Image src="/fotos/tania-sistema.webp" alt="Ecrã com o sistema de produto, clientes e fornecedores" fill sizes="(min-width: 1024px) 20vw, 45vw" className="photo-grade object-cover" />
+                        <figcaption className="absolute bottom-3 left-3 rounded-full bg-tinta/70 px-3 py-1 text-xs font-semibold text-white">Estrutura no ecrã</figcaption>
+                    </figure>
                 </div>
                 <div className="reveal space-y-5 text-lg text-tinta/85">
+                    <p className="eyebrow">Quem está do outro lado</p>
+                    <h2 className="!mt-4">Não venho da teoria. Venho da fábrica.</h2>
                     <p>
                         Transmontana, de Carrazedo de Montenegro. Vivo em Guimarães, no centro da indústria têxtil portuguesa. Fiz o percurso inteiro:
                         produção, planeamento, produto e gestão comercial.

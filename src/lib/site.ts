@@ -2,10 +2,10 @@
 export const site = {
     name: 'Tânia Silveira',
     url: 'https://taniasilveira.pt',
-    title: 'Tânia Silveira — Consultoria estratégica para marcas de moda',
+    title: 'Tânia Silveira — Estratega de marcas de moda e mercado têxtil',
     description:
-        'Estratégia de produto, margem e estrutura para marcas de moda. Método FIBRA e Consultoria Tafetá 360, com experiência real de indústria têxtil.',
-    jobTitle: 'Estrategista de produto e estrutura para marcas de moda',
+        'Estratégia para marcas de moda e mercado têxtil: produto, margem e estrutura, com experiência de chão de fábrica e inteligência artificial aplicada.',
+    jobTitle: 'Estratega de marcas de moda e mercado têxtil',
     city: 'Guimarães',
     region: 'Braga',
     country: 'PT',

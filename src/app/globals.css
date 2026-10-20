@@ -119,7 +119,24 @@
     }
 }
 
+/* Grading quente para unificar as fotos */
+.photo-grade {
+    filter: sepia(0.14) saturate(0.92) contrast(1.05) brightness(0.98);
+}
+
+.marquee {
+    animation: marquee 38s linear infinite;
+}
+@keyframes marquee {
+    to {
+        transform: translateX(-50%);
+    }
+}
+
 @media (prefers-reduced-motion: reduce) {
+    .marquee {
+        animation: none;
+    }
     html {
         scroll-behavior: auto;
     }

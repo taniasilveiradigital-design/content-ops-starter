@@ -20,6 +20,7 @@ export const baseGraph = {
             name: site.name,
             jobTitle: site.jobTitle,
             url: `${site.url}/sobre/`,
+            image: `${site.url}/fotos/tania-retrato.webp`,
             homeLocation: { '@type': 'Place', name: `${site.city}, Portugal` },
             knowsAbout: [
                 'Estratégia de marcas de moda',
@@ -27,7 +28,9 @@ export const baseGraph = {
                 'Estrutura de coleção',
                 'Cálculo de margem e preço',
                 'Produção têxtil',
-                'Posicionamento de marca'
+                'Posicionamento de marca',
+                'Mercado têxtil',
+                'Inteligência artificial aplicada à moda'
             ],
             ...(sameAs.length ? { sameAs } : {})
         },
